@@ -34,6 +34,53 @@
       // .data() 要素のdata属性を取得します。
       // .width() 要素の幅を取得します。
       // .length 要素の個数を取得します。
+      $(function() {
+
+        var wid = $('li').width();
+        var num = $('li').length;
+        var curr = 0;
+        console.log(`スライドの幅は${wid}、枚数は${num}枚です。`);
+        var position = [];
+        for(var i = 0; i < num; i++){
+          position[i] = wid * i;
+        }
+
+        $('.slider-ctrl-btn').click(function() {
+          var ctrl = $(this).data('ctrl');
+          console.log(ctrl);
+          
+          switch(ctrl){
+            case 'prev':
+              if(curr === 0){
+                curr = num - 1;
+              } else {
+                curr--;
+              }
+              var move = -1 * position[curr];
+              $('ul').animate({
+              marginLeft: move
+              },
+              1000);
+              console.log('前に戻ります');
+              break;
+            case 'next':
+              if(curr >= num-1){
+                curr = 0;
+              }else {
+                curr++;
+              }
+              var move = -1 * position[curr];
+              $('ul').animate({
+                marginLeft: move
+              },
+              1000);
+              console.log('次へ行きます');
+              break;
+          }
+
+        });
+      });
+
     </script>
   </body>
 </html>
