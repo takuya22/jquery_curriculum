@@ -11,7 +11,8 @@
   </head>
   <body>
     <div class="wrapper">
-      <ul class="colorList"></ul>
+      <ul class="colorList">
+      </ul>
     </div>
     <script src="../../common/js/jquery.js"></script>
     <script>
@@ -21,12 +22,34 @@
       // $.ajax({}) 外部ファイルやURLに対してデータをリクエストすることができます。これだけだと少しわからないと思うので下に文法を書いておきます。
       //
       // [文法]
-      // $.ajax({
-      //   url: './data.json'
-      // })
-      // .done(function(data) {
-      //   console.log(data);
-      // });
+      var Data;
+
+      $.ajax({
+        url: './data.json'
+        // type: 'get',
+        // data: { query: $('#keyword').val() },
+        // dataType: 'json'
+      })
+      .done(function(data) {
+        console.log(data);
+        $.each(data, function(index, value){
+        console.log(index + ':' + value);
+        console.log(value);
+          $.each(value, function(index, value){
+            $('.colorList').append('<li class="colorList__item">' + value.colorName + '</li>');
+            $('.colorList__item').eq(index).addClass('colorList__title').css('background-color',value.colorName);
+          })
+        })
+      });
+
+
+  // var greetText = '名前は' + name + 'です。年齢は' + age + '歳です。';
+
+      $.each(Data, function(index, value){
+        console.log("aa");
+        // $('.colorList').append('<li class="colorList__item">aa</li>');
+        // $('.colorList').append('<li class="colorList__item">aa</li>');
+      })
       //
       // 今回の場合は同じ階層にあるdata.jsonに対してリクエストを飛ばして、中にあるオブジェクトを取得します。
       // そのオブジェクトは

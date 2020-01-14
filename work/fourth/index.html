@@ -57,19 +57,32 @@
       // .children() 要素の子要素を取得します。
       // .stop() 現在動作中のアニメーション処理を全て中止します。
       $(function() {
-        $('div').find('li').hover(function() {
-          // var target = $(this).index();
-          // var target = $('.menu__list__title').next();
-          // console.log(target);
-          // $(target).slideDown();
-          $(this).children('ul').slideDown();
+
+        var targetNum;
+
+        $('.menu__list__title').hover(function() {
+          console.log(targetNum);
+          console.log($(this));
+          // $(this).next().slideDown("normal", function(){
+          //   $(this).stop(false,false);
+          // });
+          $(this).next().stop().slideDown();
         },function() {
-          $(this).children('ul').slideUp();
+          // $(this).next().slideUp("normal", function(){
+          //   $(this).stop(false,false);
+          // });
+          $(this).next().stop().slideUp();
         });
 
-        $('ul').hover(function() {
-          $(this).stop();
-        });
+        // $('.menu__list__childList__title').hover(function() {
+        //   $(this).slideDown();
+        // },function() {
+        //   $(this).slideUp();
+        // })
+
+        // $('ul').hover(function() {
+        //   $(this).stop();
+        // });
 
       });
     </script>

@@ -28,7 +28,7 @@
       // .fadeIn() 一定時間かけてフェードインする。
       // .fadeOut() 一定時間かけてフェードアウトする。
       $(function() {
-        $('.modal-show').click(function() {
+        $('.modal-show').on('click', function() {
           $('.modal').fadeIn(1000);
         });
         $('.modal-close').click(function() {

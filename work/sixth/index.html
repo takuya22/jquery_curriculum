@@ -30,7 +30,7 @@
 
         $('.input').keyup(function() {
           const max = 30;
-          var num = 30 - $(this).val().length;
+          var num = 30 - $(this).val().replace(/\s+/g,'').length;
           // console.log(num);
           $('.rest-count').text(num);
           if(num <= 0){

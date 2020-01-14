@@ -102,19 +102,22 @@
 
         $('.select').change(function() {
           type = $(this).val();
-          //console.log(type);
-          $('li').each(eachFunc);
+          if(type == 'all'){
+            $('.list').find('li').show();
+          } else {
+            $('.list').find('li').each(eachFunc);
+          }
         });
 
-        function eachFunc(index,item){
+        function eachFunc(index, item){
           var category = $(item).data('category-type');
           if(category === type) {
             $(item).show();
           } else {
             $(item).hide();
           }
-          // var tmp = `これは${index}番目の${category}です。`;
-          // console.log(tmp);
+           var tmp = `これは${index}番目の${category}です。`;
+           console.log(tmp);
         }
 
       })

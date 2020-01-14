@@ -34,17 +34,18 @@
 
         $('.nav').find('li').click(function() {
           var targetNum = $(this).index();
-          var length = $('.nav').find('li').length;
+          // var length = $('.nav').find('li').length;
           // $('.contents').find('li').eq(targetNum).addClass('is-hidden');
           //  console.log(length);//3
           //  console.log(targetNum);
-          for(var i = 0; i < length; i++){
-            if(i === targetNum){
-              $('.contents').find('li').eq(i).removeClass('is-hidden');
+
+          $('.nav').find('li').each(function(index, element) {
+            if(index === targetNum){
+              $(element).removeClass('is-hidden');
             } else {
-              $('.contents').find('li').eq(i).addClass('is-hidden');
+              $(element).addClass('is-hidden');
             }
-          }
+          });
         })
       })
     </script>
