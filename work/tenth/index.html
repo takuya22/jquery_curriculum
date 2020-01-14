@@ -68,6 +68,116 @@
       //
       //
       //
+
+      $(function() {
+
+        var lc_num = 0;
+        var pre_word;
+        var pre_page = 0;
+        var view_page = 1;
+
+        $('.search__btn').on('click', function(){
+          var word = $('.search__text__input').val();
+          gl_num = 0;
+
+          if(word != pre_word){
+            //初期化
+            view_page = 0;
+            pre_page = 1;
+            $('.lists').remove();
+            $('.message').remove();
+            $('.container').append('<ul class="lists"></ul>');
+          }
+
+          $.ajax({
+            url:  'https://app.rakuten.co.jp/services/api/BooksTotal/Search/20130522',
+            type: 'GET',
+            dataType: 'json',
+            data: {
+              applicationId: '1019399324990976605',
+              booksGenreId: '001',
+              keyword: word,
+              page: pre_page,
+            },
+          }).done(function(data) {
+
+            if(data.count === 0){
+              $('.search').after('<div class="message">検索結果が見つかりませんでした。<br>別のキーワードで検索して下さい。');
+            }
+  
+            $.each(data, function(index, value){
+              var count = data.count;
+              console.log(data);
+              if(index == "Items"){
+                $.each(value, function(index, value){
+
+                  lc_num++;
+                  console.log(this);
+                  console.log(this.Item.title + ' 現在番号' + lc_num + ' ビューページ' + view_page);
+
+                  if((view_page % 6 === 2 && lc_num <= 20) || (view_page % 6 === 4 && lc_num <= 10)){
+                    return true;
+                  }
+
+
+                  createHtml(this);
+                  
+                  if(view_page % 6 === 2){
+                    if(lc_num === 30){
+                      console.log('10枚表示しました(前)');
+                      lc_num = 0;
+                      view_page+=1;
+                      pre_page = Math.floor( view_page / 3 ) + 1;
+                      pre_word = word;
+                      $('.search__btn').trigger('click');
+                      return false;
+                    }
+                  }
+                  if(view_page % 6 === 3){
+                    if(lc_num === 10){
+                      console.log('10枚表示しました(後)');
+                      lc_num = 0;
+                      view_page+=1;
+                      pre_page = Math.floor( view_page / 3 ) + 1;
+                      pre_word = word;
+                      return false;
+                    }
+                  }
+                  if(view_page % 6 === 4){
+                    if(lc_num === 30){
+                      console.log('20枚表示しました(後)');
+                      lc_num = 0;
+                      view_page+=2;
+                      pre_page = Math.floor( view_page / 3 ) + 1;
+                      pre_word = word;
+                      return false;                      
+                    }
+                  }
+                  if(view_page % 6 === 0){
+                    if(lc_num === 20){
+                      console.log('20枚表示しました(前)');
+                      lc_num = 0;
+                      view_page+=2;
+                      pre_page = Math.ceil( view_page / 3 );
+                      pre_word = word;
+                      return false;
+                    }
+                  }
+                })
+              }
+            })
+          })
+          .fail(function(){
+            $('.search').after('<div class="message">以下の理由によりエラーの可能性があります。<br><span style="color:red">①検索ワードがない<br>②検索ワードが半角英数字1文字<br>③ネット環境が切れている<br>④「検索する」を連打している。</span></div>');
+          })
+        })
+
+        function createHtml(book) {
+          $('.lists').prepend('<li class="lists__item"><div class="lists__item__inner"><a href="'+book.Item.itemUrl + '" class="lists__item__link" target="_blank"><img src="' + book.Item.largeImageUrl + '" class="lists__item__img" alt=""><p class="lists__item__detail">作品名：' + book.Item.title + '</p><p class="lists__item__detail">作者　：' + book.Item.author + '</p><p class="lists__item__detail">出版社：'+book.Item.publisherName + '</p></a></div></li>');
+        }
+
+      })
+
     </script>
   </body>
 </html>
