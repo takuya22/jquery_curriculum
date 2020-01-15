@@ -76,16 +76,18 @@
         var pre_page = 0;
         var view_page = 1;
         var word;
+        var num = 1;
 
         $('.search__btn').on('click', function(){
           word = $('.search__text__input').val();
           gl_num = 0;
-          console.log(word);
 
           if(word != pre_word){
             //初期化
             view_page = 0;
             pre_page = 1;
+            lc_num = 0;
+            num = 1;
             $('.lists').remove();
             $('.message').remove();
             $('.container').append('<ul class="lists"></ul>');
@@ -106,17 +108,18 @@
             if(data.count === 0){
               $('.search').after('<div class="message">検索結果が見つかりませんでした。<br>別のキーワードで検索して下さい。');
             }
-  
+
             console.log(data);
             $.each(data.Items, function(index, value){
 
               lc_num++;
-              console.log(this);
-              console.log(this.Item.title + ' 現在番号' + lc_num + ' ビューページ' + view_page);
 
               if((view_page % 6 === 2 && lc_num <= 20) || (view_page % 6 === 4 && lc_num <= 10)){
                 return true;
               }
+              
+              console.log(this);
+              console.log(this.Item.title + ' 現在番号' + num + ' ビューページ' + view_page);
 
               createHtml(this);
               
@@ -177,9 +180,9 @@
         })
 
         function createHtml(book) {
-          $('.lists').prepend('<li class="lists__item"><div class="lists__item__inner"><a href="'+book.Item.itemUrl + '" class="lists__item__link" target="_blank"><img src="' + book.Item.largeImageUrl + '" class="lists__item__img" alt=""><p class="lists__item__detail">作品名：' + book.Item.title + '</p><p class="lists__item__detail">作者　：' + book.Item.author + '</p><p class="lists__item__detail">出版社：'+book.Item.publisherName + '</p></a></div></li>');
+          $('.lists').append('<li class="lists__item"><div class="lists__item__inner"><a href="'+book.Item.itemUrl + '" class="lists__item__link" target="_blank"><img src="' + book.Item.largeImageUrl + '" class="lists__item__img" alt=""><p class="lists__item__detail">作品名：' + book.Item.title + '</p><p class="lists__item__detail">作者　：' + book.Item.author + '</p><p class="lists__item__detail">出版社：'+book.Item.publisherName + '</p></a></div></li>');
+          num++;
         }
-
       })
 
     </script>
