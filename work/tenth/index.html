@@ -71,29 +71,17 @@
 
       $(function() {
 
-        var lc_num = 0;
         var pre_word;
-        var pre_page = 0;
-        var view_page = 1;
+        var pre_page = 1;
         var word;
-        var num = 1;
         var html_field = "";
         var save_field = "";
 
         $('.search__btn').on('click', function(){
           word = $('.search__text__input').val();
-          gl_num = 0;
 
           if(word != pre_word){
-            //初期化
-            view_page = 0;
-            pre_page = 1;
-            lc_num = 0;
-            num = 1;
-            html_field = save_field = "";
-            $('.lists').remove();
-            $('.message').remove();
-            $('.container').append('<ul class="lists"></ul>');
+            initialize_field();
           }
 
           $.ajax({
@@ -105,106 +93,50 @@
               booksGenreId: '001',
               keyword: word,
               page: pre_page,
+              hits: 20,
             },
           }).done(function(data) {
-
-            if(data.count === 0){
-              $('.message').remove();
-              $('.search').after('<div class="message">検索結果が見つかりませんでした。<br>別のキーワードで検索して下さい。');
-            }
-
-            console.log(data);
-            $.each(data.Items, function(index, value){
-
-              lc_num++;
-
-              if((view_page % 6 === 2 && lc_num <= 20) || (view_page % 6 === 4 && lc_num <= 10)){
-                return true;
-              }
-              
-              console.log(this);
-              console.log(this.Item.title + ' 現在番号' + num + ' ビューページ' + view_page);
-
-              createHtml(this);
-              
-              if(view_page % 6 === 2){
-                if(lc_num === 30){
-                  console.log('10枚表示しました(前)');
-                  lc_num = 0;
-                  view_page+=1;
-                  pre_page = Math.floor( view_page / 3 ) + 1;
-                  pre_word = word;
-                  $('.search__btn').trigger('click');
-                  return false;
-                }
-              }
-              if(view_page % 6 === 3){
-                if(lc_num === 10){
-                  console.log('10枚表示しました(後)');
-                  lc_num = 0;
-                  view_page+=1;
-                  pre_page = Math.floor( view_page / 3 ) + 1;
-                  pre_word = word;
-                  html_field += save_field;
-                  $('.lists').html(html_field);
-                  save_field = html_field;
-                  html_field = "";
-                  return false;
-                }
-              }
-              if(view_page % 6 === 4){
-                if(lc_num === 30){
-                  console.log('20枚表示しました(後)');
-                  lc_num = 0;
-                  view_page+=2;
-                  pre_page = Math.floor( view_page / 3 ) + 1;
-                  pre_word = word;
-                  html_field += save_field;
-                  $('.lists').html(html_field);
-                  save_field = html_field;
-                  html_field = "";
-                  return false;                      
-                }
-              }
-              if(view_page % 6 === 0){
-                if(lc_num === 20){
-                  console.log('20枚表示しました(前)');
-                  lc_num = 0;
-                  view_page += 2;
-                  pre_page = Math.ceil( view_page / 3 );
-                  pre_word = word;
-                  html_field += save_field;
-                  $('.lists').html(html_field);
-                  save_field = html_field;
-                  html_field = "";
-                  return false;
-                }
-              }
-            })
-            console.log("もう本がないよ泣");
-            html_field += save_field;
-            $('.lists').html(html_field);
-            save_field = html_field;
-            html_field = "";
+            done_ajax(data);
           })
           .fail(function(data){
-            if(data.responseText){
-              $('.search').after('<div class="message" style="color:red">'+data.responseText+'</div>');
-            }
-            if(!navigator.onLine){
-              $('.search').after('<div class="message" style="color:red">"current network status is offline"</div>');
-            }
+            initialize_field();
+            fail_ajax(data);
           })
         })
 
-        function createHtml(book) {
-          html_field += '<li class="lists__item"><div class="lists__item__inner"><a href="'+book.Item.itemUrl + '" class="lists__item__link" target="_blank"><img src="' + book.Item.largeImageUrl + '" class="lists__item__img" alt=""><p class="lists__item__detail">作品名：' + book.Item.title + '</p><p class="lists__item__detail">作者　：' + book.Item.author + '</p><p class="lists__item__detail">出版社：'+book.Item.publisherName + '</p></a></div></li>'
-          num++;
+        function initialize_field() {
+          pre_page = 1;
+          html_field = save_field = "";
+          $('.lists').find('.lists__item').remove();
+          $('.message').remove();
         }
-        // function createHtml(book) {
-        //   $('.lists').append('<li class="lists__item"><div class="lists__item__inner"><a href="'+book.Item.itemUrl + '" class="lists__item__link" target="_blank"><img src="' + book.Item.largeImageUrl + '" class="lists__item__img" alt=""><p class="lists__item__detail">作品名：' + book.Item.title + '</p><p class="lists__item__detail">作者　：' + book.Item.author + '</p><p class="lists__item__detail">出版社：'+book.Item.publisherName + '</p></a></div></li>');
-        //   num++;
-        // }
+
+        function done_ajax(done_data) {
+          $('.message').remove();
+          if(done_data.count === 0){
+            $('.search').after('<div class="message">検索結果が見つかりませんでした。<br>別のキーワードで検索して下さい。');
+          }else {
+            $.each(done_data.Items, function(index, value){              
+              console.log(value);
+              html_field += '<li class="lists__item"><div class="lists__item__inner"><a href="' + value.Item.itemUrl + '" class="lists__item__link" target="_blank"><img src="' + value.Item.largeImageUrl + '" class="lists__item__img" alt=""><p class="lists__item__detail">作品名：' + value.Item.title + '</p><p class="lists__item__detail">作者　：' + value.Item.author + '</p><p class="lists__item__detail">出版社：' + value.Item.publisherName + '</p></a></div></li>';
+            })
+          }
+          html_field += save_field;
+          $('.lists').prepend(html_field);
+          save_field = "";
+          html_field = "";
+          pre_word = word;
+          pre_page++;
+        }
+
+        function fail_ajax(fail_data) {
+          if(fail_data.responseText){
+              $('.search').after('<div class="message" style="color:red">'+fail_data.responseText+'</div>');
+            }
+          if(!navigator.onLine){
+            $('.search').after('<div class="message" style="color:red">"current network status is offline"</div>');
+          }
+        }
       })
 
     </script>
