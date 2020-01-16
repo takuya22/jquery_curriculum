@@ -70,12 +70,12 @@
       //
 
       $(function() {
-
-        var pre_word;
-        var pre_page = 1;
-        var word;
-        var html_field = "";
-        var save_field = "";
+        //変数
+        var pre_word,//
+            pre_page = 1,//
+            word;//
+        // var html_field = "";
+        // var save_field = "";
 
         $('.search__btn').on('click', function(){
           word = $('.search__text__input').val();
@@ -107,7 +107,7 @@
         function initialize_field() {
           pre_page = 1;
           html_field = save_field = "";
-          $('.lists').find('.lists__item').remove();
+          $('.lists').empty();
           $('.message').remove();
         }
 
@@ -116,25 +116,27 @@
           if(done_data.count === 0){
             $('.search').after('<div class="message">検索結果が見つかりませんでした。<br>別のキーワードで検索して下さい。');
           }else {
-            $.each(done_data.Items, function(index, value){              
+            var html_field = "";
+            $.each(done_data.Items, function(index, value){
               console.log(value);
               html_field += '<li class="lists__item"><div class="lists__item__inner"><a href="' + value.Item.itemUrl + '" class="lists__item__link" target="_blank"><img src="' + value.Item.largeImageUrl + '" class="lists__item__img" alt=""><p class="lists__item__detail">作品名：' + value.Item.title + '</p><p class="lists__item__detail">作者　：' + value.Item.author + '</p><p class="lists__item__detail">出版社：' + value.Item.publisherName + '</p></a></div></li>';
             })
           }
-          html_field += save_field;
+          // html_field += save_field;
           $('.lists').prepend(html_field);
-          save_field = "";
-          html_field = "";
+          // save_field = "";
+          // html_field = "";
           pre_word = word;
           pre_page++;
         }
 
         function fail_ajax(fail_data) {
-          if(fail_data.responseText){
-              $('.search').after('<div class="message" style="color:red">'+fail_data.responseText+'</div>');
+          console.log(fail_data);
+          if(fail_data.responseJSON){
+              $('.search').after('<div class="message" style="color:red">'+fail_data.responseJSON.error_description+'</div>');
             }
-          if(!navigator.onLine){
-            $('.search').after('<div class="message" style="color:red">"current network status is offline"</div>');
+          if(fail_data.readyState != 4){
+            $('.search').after('<div class="message" style="color:red">current network status is offline</div>');
           }
         }
       })
